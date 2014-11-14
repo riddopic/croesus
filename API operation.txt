@@ -1,0 +1,197 @@
+
+
+# Operation | Description
+# ----------|----------------------------------------------------------------|
+#   create  | Create a new instance of the object type from the root static  |
+#           | context. Not all objects can be created in this simplified     |
+#           | fashion. Databases, for example, are created through the link  |
+#           | and provision commands.                                        |
+# ----------|----------------------------------------------------------------|
+#   delete  | Deletes an object that has been selected. Not all objects can  |
+#           | be deleted.                                                    |
+# ----------|----------------------------------------------------------------|
+#    get    | Display all or some of the properties of an object after       |
+#           | selecting it.                                                  |
+# ----------|----------------------------------------------------------------|
+#    list   | For a given object type (represented by a static context such  |
+#           | as database), list the objects on the system, optionally       |
+#           | constrained by some set of attributes. Some objects are global |
+#           | to the system and do not support this operation.               |
+# ----------|----------------------------------------------------------------|
+#   select  | Select a particular object by name to get properties or        |
+#           | perform an operation on the object. See the “Delphix Objects”  |
+#           | section for more information on object naming.                 |
+# ----------|----------------------------------------------------------------|
+#   update  | Enter a command context to change one or more properties of an |
+#           | object after selecting. Not all objects support this operation,|
+#           | and only properties that can be edited are shown when in the   |
+#           | update command context.                                        |
+# ----------|----------------------------------------------------------------|
+
+Environment Components
+An environment is the root of the representation of external state that manages
+database instances. An environment could be a single host (UnixHostEnvironment)
+or an Oracle cluster (OracleClusterEnvironment). Environments exist to contain
+repositories, and each environment may have any number of repositories
+associated with it. A repository is the entity that contains database instances.
+Repositories are typically installation directories (OracleInstall) within an
+environment. Within each repository of any number of SourceConfig objects, which
+represent known database instances. The source config exists independent of
+Delphix, and could represent a possible dSource (in which case there is no
+associated database object), or could be managed entirely by Delphix (for VDBs).
+The source config contains intrinsic properties of the database instance, while
+the source (described below) contains information specific to Delphix and only
+exists when the source config is linked to a dSource or VDB.
+
+Most environment objects are created through the act of discovery. By specifying
+a host, Delphix will attempt to automatically discover all environments,
+repositories, and source configs. These objects can also be added manually after
+the fact in cases where discovery fails.
+
+The environment hierarchy can be represented this way:
+
+         |-------------------------------|
+         |          Environment          |
+         |-------------------------------|
+         |      UnixHostEnvironment      |
+         |-------------------------------|
+                        |
+                        |
+         |-------------------------------|
+         |        SourceRepository       |
+         |-------------------------------|
+         |        OracleInstall          |
+         |-------------------------------|
+                        |
+                        |
+         |-------------------------------|
+         |        SourceConfig           |
+         |-------------------------------|
+         |       OracleSIConfig          |
+         |-------------------------------|
+
+
+The generic type is listed in the top portion of each box, with an example of
+the Oracle single instance objects in the lower portion of each box. Each of
+these objects can contain multiple child objects with it.
+
+Database Components
+The core of all databases within Delphix is the Container that contains all the
+physical data associated with the database, whether it is a dSource or VDB.
+Within each container is a Timeflow, which represents a single timeline of
+change within the database history. Currently, a container can only have one
+timeflow, though this limitation may be relaxed in a future release. Within a
+timeflow are two important object: TimeflowSnapshot objects and TimeflowRange
+objects. Timeflow ranges represent the provisionable ranges within the history
+of the timeflow, while timeflow snapshot represent a point at which at snapshot
+was taken and therefore more likely to provision in a short amount of time. The
+resulting data hierarchy can be represented this way:
+
+        |-------------------------------|
+        |           Container           |
+        |-------------------------------|
+        |    OracleDatabaseContainer    |
+        |-------------------------------|
+                       |
+                       |
+        |-------------------------------|
+        |          Timeflow             |
+        |-------------------------------|
+        |        OracleTimeflow         |
+        |-------------------------------|
+                       |
+                       |
+        |-------------------------------|
+        |       TimeflowSnapshot        |
+        |-------------------------------|
+        |        OracleSnapshot         |
+        |-------------------------------|
+
+
+Each container may be associated with a Source. A source is the Delphix
+representation of an external database when it is associated with a container,
+and contains information specific to managing that source. Not all source
+configs within an environment have a source associated with them (as is the case
+with linkable databases), but all sources must have a source config. Containers
+may have no sources associated with them if they are unlined; sources can be
+manually attached at a later point. Currently, each container can have at most
+once source associated with it, though this may change in a future release.
+
+
+Properties
+                   |
+currentTimeflow    | A reference to the currently active timeflow for this
+                   | container.
+                   | Type: REFERENCE TO "Timeflow"
+-------------------|------------------------------------------------------------
+description        | Optional user-provided description for the container.
+                   | Type: STRING
+                   | Constraints:
+                   | Max Length: 1024
+                   | Create: optional
+                   | Update: optional
+-------------------|------------------------------------------------------------
+group              | A reference to the group containing this container.
+                   | Type: REFERENCE TO "Group"
+                   | Constraints:
+                   | Create: required
+-------------------|------------------------------------------------------------
+masked             | Whether this container has the masked bit set.
+                   | Type: boolean
+                   | Constraints:
+                   | Create: optional
+                   | Update: optional
+-------------------|------------------------------------------------------------
+performanceMode    | Users can enable Performance Mode to improve performance of
+                   | write operations to their databases. If Performance Mode is
+                   | enabled, data consistency is guaranteed, but there might
+				   | be small amount of data loss in the case of Delphix Engine
+                   | failure.
+                   |
+                   | Each time a Delphix Engine is restarted (whether caused by
+                   | a failure or not), all virtual databases with Performance
+				   | Mode enabled will be shutdown and restarted automatically.
+                   | Type: boolean
+                   | Constraints:
+                   | Create: optional
+                   | Update: optional
+-------------------|------------------------------------------------------------
+provisionContainer | A reference to the container this container was provisioned
+                   | from.
+                   | Type: REFERENCE TO "Container"
+-------------------|------------------------------------------------------------
+
+
+
+
+performanceMode
+Users can enable Performance Mode to improve performance of write operations to their databases. If Performance Mode is enabled, data consistency is guaranteed, but there might be a small amount of data loss in the case of Delphix Engine failure.
+
+Each time a Delphix Engine is restarted (whether caused by a failure or not), all virtual databases with Performance Mode enabled will be shutdown and restarted automatically.
+
+Type: boolean
+Constraints:
+Create: optional
+Update: optional
+provisionContainer
+A reference to the container this container was provisioned from.
+
+Type: Reference to Container
+runtime
+Runtime properties of this container.
+
+Type: DBContainerRuntime
+
+
+
+
+
+
+
+
+
+
+
+
+
+
