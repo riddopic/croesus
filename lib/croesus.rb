@@ -89,7 +89,7 @@ module Croesus
   InvalidMethodError   = Class.new StandardError
   InvalidArgumentCount = Class.new StandardError
 
-  API_VERSION          = { type: 'APIVersion', major: 1, minor: 3, micro: 0 }
+  API_VERSION          = { type: 'APIVersion', major: 1, minor: 3, micro: 2 }
 
   API_ENDPOINT         = '/resources/json/delphix'
 

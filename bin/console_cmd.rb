@@ -82,17 +82,8 @@ def define_resource_methods
   Croesus::AnonoMod.registry.each do |key, value|
     # define_method(key) { Croesus::AnonoMod.registry[key.to_sym] }
     define_method(key) do |*args|
-      Croesus::AnonoMod.registry[key.to_sym].send :"#{args}"
-    end
-  end
-end
-
-def define_resource_methods
-  Croesus::AnonoMod.registry.each do |key, value|
-    # define_method(key) { Croesus::AnonoMod.registry[key.to_sym] }
-    define_method(key) do |*args|
       puts "Croesus::AnonoMod.registry[#{key.to_sym}] send #{args}"
-      # Croesus::AnonoMod.registry[key.to_sym].send :"#{args}"
+      Croesus::AnonoMod.registry[key.to_sym].send :"#{args}"
     end
   end
 end
