@@ -89,7 +89,7 @@ module Croesus
   InvalidMethodError   = Class.new StandardError
   InvalidArgumentCount = Class.new StandardError
 
-  API_VERSION          = { type: 'APIVersion', major: 1, minor: 3, micro: 2 }
+  # API_VERSION          = { type: 'APIVersion', major: 1, minor: 3, micro: 2 }
 
   API_ENDPOINT         = '/resources/json/delphix'
 
@@ -123,6 +123,7 @@ module Croesus
     #   @return [#body] parsed response body
     #   @return [#raw_body] un-parsed response body
     attr_accessor :session
+    attr_accessor :api_version
 
     # @!attribute [rw] server
     #   @return [String] Delphix server address
@@ -172,7 +173,7 @@ module Croesus
   # @api public
   def self.cookies
     @resp ||= Croesus.post session_url,
-      { type: 'APISession', version: API_VERSION }
+      { type: 'APISession', version: @api_version }
     @resp.cookies
   end
 

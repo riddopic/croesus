@@ -27,7 +27,7 @@ module Croesus
   module Version
     MAJOR = 0
     MINOR = 1
-    PATCH = 7
+    PATCH = 8
 
     # Returns a version string by joining MAJOR, MINOR, and PATCH with '.'
     #
